@@ -9,3 +9,7 @@
 ## Created: Fall 2022
 ## Author: samantha.diloreto@duke.edu (for ENV859)
 ##---------------------------------------------------------------------
+
+#%% Import modules
+import sys, os, arcpy
+
