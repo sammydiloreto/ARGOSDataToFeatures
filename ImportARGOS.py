@@ -13,18 +13,26 @@
 #%% Import modules
 import sys, os, arcpy
 
+#%%overwrtie outputs
+arcpy.env.overwriteOutput = True
+
 #%% Set input variables (Hard-wired)
 inputFile = 'V:/ARGOSTracking/Data/ARGOSData/1997dg.txt'
 outputFC = "V:/ARGOSTracking/Scratch/ARGOStrack.shp"
 
-#%% Construct a while loop to iterate through all lines in the datafile
-# Open the ARGOS data file for reading
+#%% Prepare a new feature class to which we'll add tracking points
+# Create an empty feature class; requires the path and name as separate parameters
+outPath,outName = os.path.split(outputFC)
+arcpy.management.CreateFeatureclass(outPath,outName)
+
+#%% Construct a while loop and iterate through all lines in the data file
+# Open the ARGOS data file
 inputFileObj = open(inputFile,'r')
 
-# Get the first line of data, so we can use a while loop
+# Get the first line of data, so we can use the while loop
 lineString = inputFileObj.readline()
 
-# Start the while loop
+#Start the while loop
 while lineString:
     
     # Set code to run only if the line contains the string "Date: "
@@ -35,9 +43,6 @@ while lineString:
         
         # Extract attributes from the datum header line
         tagID = lineData[0]
-        obsDate = lineData[3]
-        obsTime = lineData[4]
-        obsLC = lineData[7]
         
         # Extract location info from the next line
         line2String = inputFileObj.readline()
@@ -48,9 +53,14 @@ while lineString:
         # Extract the date we need to variables
         obsLat = line2Data[2]
         obsLon= line2Data[5]
+                    
+        # Extract the date, time, and LC values
+        obsDate = lineData[3]
+        obsTime = lineData[4]
+        obsLC   = lineData[7]
         
         # Print results to see how we're doing
-        print (tagID,obsDate,obsTime,obsLC,"Lat:"+obsLat,"Long:"+obsLon)
+        print (tagID,"Lat:"+obsLat,"Long:"+obsLon, obsLC, obsDate, obsTime)
         
     # Move to the next line so the while loop progresses
     lineString = inputFileObj.readline()
